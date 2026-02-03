@@ -14,15 +14,17 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname))); // Serve static files from current directory
 
 // Email Configuration
-// Email Configuration
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587, // Port 587 for better reliability
-    secure: false, // true for 465, false for other ports
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
+    tls: {
+        rejectUnauthorized: false
+    },
+    // Important: Force IPv4 as some cloud providers have issues with IPv6 to Gmail
+    family: 4
 });
 
 // Verify connection configuration
