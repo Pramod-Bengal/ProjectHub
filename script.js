@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Contact Form Handling
   const contactForm = document.querySelector('.contact-form');
   if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = contactForm.querySelector('button');
       const originalText = btn.textContent;
@@ -130,38 +130,38 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.disabled = true;
 
       // Real API call to our backend
-      fetch('/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: contactForm.querySelector('input[type="text"]').value,
-          email: contactForm.querySelector('input[type="email"]').value,
-          message: contactForm.querySelector('textarea').value
-        })
-      })
-        .then(response => {
-          if (response.ok) {
-            btn.textContent = 'Message Sent!';
-            btn.style.background = '#22c55e'; // Green success color
-            contactForm.reset();
-          } else {
-            throw new Error('Failed to send');
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          btn.textContent = 'Error Sending';
-          btn.style.background = '#ef4444'; // Red error color
-        })
-        .finally(() => {
-          setTimeout(() => {
-            btn.textContent = originalText;
-            btn.disabled = false;
-            btn.style.background = '#2563eb'; // Revert color
-          }, 3000);
+      try {
+        const response = await fetch('/send-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: contactForm.querySelector('input[type="text"]').value,
+            email: contactForm.querySelector('input[type="email"]').value,
+            message: contactForm.querySelector('textarea').value
+          })
         });
+
+        if (response.ok) {
+          btn.textContent = 'Message Sent!';
+          btn.style.background = '#22c55e'; // Green success color
+          contactForm.reset();
+        } else {
+          throw new Error('Failed to send');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        btn.textContent = 'Error Sending';
+        btn.style.background = '#ef4444'; // Red error color
+      } finally {
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.disabled = false;
+          btn.style.background = '#2563eb'; // Revert color
+        }, 3000);
+      }
+
     });
   }
 });
