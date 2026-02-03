@@ -6,7 +6,7 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -48,7 +48,7 @@ app.post('/send-email', (req, res) => {
 
     const mailOptions = {
         from: email,
-        to: 'your-email@gmail.com', // Where you want to receive the emails
+        to: 'pramodbenagal@gmail.com', // Where you want to receive the emails
         subject: `New ProjectHub Inquiry from ${name}`,
         text: `You have received a new message from ProjectHub Contact Form.
         
@@ -59,10 +59,15 @@ app.post('/send-email', (req, res) => {
         ${message}`
     };
 
+    // Check for credentials
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        return res.status(500).json({ error: 'Server configuration error: Missing email credentials on server.' });
+    }
+
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.log(error);
-            return res.status(500).send('Error sending email');
+            return res.status(500).json({ error: error.toString() }); // Send exact error to client
         } else {
             console.log('Email sent: ' + info.response);
             return res.status(200).send('Email sent successfully');

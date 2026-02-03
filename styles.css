@@ -404,8 +404,53 @@ footer {
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    padding: 15px 20px;
+    gap: 15px;
+  }
+
+  nav ul {
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  header {
+    padding: 60px 20px;
+    min-height: auto !important;
+    /* Override inline style if possible, or just accept flow */
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+  }
+
   .contact-container {
     grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .whatsapp-float {
+    width: 50px;
+    height: 50px;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .whatsapp-float img {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 1.8rem;
+  }
+
+  nav a {
+    font-size: 0.85rem;
   }
 }
 

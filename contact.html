@@ -7,6 +7,7 @@
     <title>Contact - ProjectHub</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://img.icons8.com/color/48/code.png" type="image/png">
 </head>
 
 <body>
@@ -22,18 +23,19 @@
 
     <section id="contact">
         <div class="section-title">Contact Us</div>
-        <div class="contact-container">
+        <div class="contact-container" style="animation: slideUp 0.6s ease-out;">
             <div class="contact-info">
                 <h3>Have a question? Get in touch!</h3>
                 <p>Email: pramodbenagal@gmail.com</p>
                 <p>Phone: +91 9632651044</p>
                 <p>We provide full support for setup and installation.</p>
             </div>
-            <form class="contact-form">
-                <input type="text" placeholder="Your Name" required>
-                <input type="email" placeholder="Your Email" required>
-                <textarea rows="4" placeholder="Your Message" required></textarea>
-                <button type="submit" class="submit-btn">Send Message</button>
+            <form class="contact-form" id="contactForm">
+                <input type="text" id="name" placeholder="Your Name" required>
+                <input type="email" id="email" placeholder="Your Email" required>
+                <textarea id="message" rows="4" placeholder="Your Message" required></textarea>
+                <button type="submit" class="submit-btn" id="sendBtn">Send Message</button>
+                <div id="statusMessage" style="text-align: center; margin-top: 10px; min-height: 20px;"></div>
             </form>
         </div>
     </section>
@@ -44,6 +46,56 @@
 
     <footer>© 2026 ProjectHub. All rights reserved.</footer>
     <script src="script.js"></script>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            const btn = document.getElementById('sendBtn');
+            const status = document.getElementById('statusMessage');
+
+            // Animation for button
+            const originalText = btn.innerText;
+            btn.innerText = 'Sending...';
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+
+            try {
+                const response = await fetch('/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, message })
+                });
+
+                if (response.ok) {
+                    status.style.color = '#4ade80'; // Success green
+                    status.innerText = 'Message sent successfully!';
+                    document.getElementById('contactForm').reset();
+                } else {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to send');
+                }
+            } catch (error) {
+                console.error(error);
+                status.style.color = '#f87171'; // Error red
+                status.innerText = error.message || 'Failed to send message. Please try again.';
+            } finally {
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    // Clear status after 5 seconds
+                    setTimeout(() => {
+                        status.innerText = '';
+                    }, 5000);
+                }, 1000);
+            }
+        });
+    </script>
 </body>
 
 </html>
