@@ -23,7 +23,11 @@ const transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_PASS
     },
     // Important: Force IPv4 as some cloud providers have issues with IPv6 to Gmail
-    family: 4
+    family: 4,
+    // Increase timeout
+    connectionTimeout: 20000,
+    greetingTimeout: 20000,
+    socketTimeout: 20000
 });
 
 // Verify connection configuration
