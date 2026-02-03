@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname))); // Serve static files from curren
 // Email Configuration
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 587,
+    port: 587, // Port 587 for better reliability
     secure: false, // true for 465, false for other ports
     auth: {
         user: process.env.EMAIL_USER,
